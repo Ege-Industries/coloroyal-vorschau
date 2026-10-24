@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ColoRoyal Smart Repair – Lederreparatur in Lampertheim | Auto, Oldtimer, Möbel</title>
 <meta name="description" content="Smart Repair für Leder &amp; Vinyl in Lampertheim: Riss- und Brandlochreparatur, Farbanpassung, Lenkradaufbereitung, Druckstellen, Cockpit. Für Auto, Oldtimer, Möbel, Boot und Flugzeug. Fotos per WhatsApp schicken.">
+
 <link rel="canonical" href="https://www.coloroyal.de/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ColoRoyal Smart Repair">
@@ -46,26 +47,24 @@
 <main id="inhalt">
 
 <section class="held dunkel" id="start">
-  <div class="held-licht" aria-hidden="true"></div>
-  <canvas class="held-3d" id="sitz3d" aria-label="3D-Autositz mit Schäden. Mit der Maus über das Leder fahren repariert es."></canvas>
+  <div class="film" id="film" aria-hidden="true">
+    <img class="film-poster" src="assets/img/arbeiten-hd/farbe-cognac-v.jpg" alt="" fetchpriority="high">
+    <canvas id="filmCanvas"></canvas>
+  </div>
   <div class="held-text">
-    <p class="kicker">Smart Repair · Lampertheim</p>
-    <h1 class="disp held-titel">Leder ist unser <em>Fachgebiet.</em></h1>
-    <p class="held-sub">Reparatur, Restauration und Pflege von Leder &amp; Vinyl – für Automobil, Oldtimer, Möbel, Boote und Flugzeuge.</p>
+    <p class="kicker">Echte Arbeiten · Lampertheim</p>
+    <h1 class="disp held-titel">Aus alt wird <em>wie neu.</em></h1>
+    <p class="held-sub">Smart Repair für Leder &amp; Vinyl: Autositze, Lenkräder, Cockpits und Möbel – repariert statt ersetzt.</p>
     <div class="knoepfe">
       <a class="knopf knopf-blau js-wa" href="https://wa.me/4917680405247?text=Hallo%20ColoRoyal%2C%20ich%20h%C3%A4tte%20gerne%20eine%20Einsch%C3%A4tzung%20zu%20einem%20Lederschaden.%20Fotos%20schicke%20ich%20mit." target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.27-.2-.57-.35m-5.42 7.4h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.48-8.41z"/></svg><span>Fotos per WhatsApp</span></a>
-      <a class="knopf knopf-leder" href="leistungen.html"><span>Unsere Leistungen</span><svg class="ico pfeil" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+      <a class="knopf knopf-leder" href="#vorher-nachher"><span>Mehr Vorher/Nachher</span><svg class="ico pfeil" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
     </div>
   </div>
-  <div class="schaeden" id="schaeden" aria-hidden="true">
-    <div class="schaden" data-k="riss"><i></i><b>Riss</b><span>repariert</span></div>
-    <div class="schaden" data-k="brand"><i></i><b>Brandloch</b><span>repariert</span></div>
-    <div class="schaden" data-k="farbe"><i></i><b>Farbe verblasst</b><span>aufgefrischt</span></div>
-  </div>
-  <div class="held-hud" id="sitzHud">
-    <div class="hud-zeile"><span class="hud-k">Zustand</span><b id="sitzProz">–</b></div>
-    <div class="hud-balken"><i id="sitzBar"></i></div>
-    <p class="hud-tipp"><span class="nur-maus">Fahren Sie mit der Maus über das Leder.</span><span class="nur-touch">Smart Repair läuft – einfach zuschauen.</span></p>
+  <div class="film-ui" id="filmUi">
+    <div class="film-seg" id="filmSeg"></div>
+    <p class="film-zeile"><span id="filmNr">01 / 05</span><span id="filmTitel">Cognac-Sitz</span></p>
+    <p class="film-status" id="filmStatus" data-s="vorher" aria-live="polite"><b class="sv">Vorher</b><b class="sn">Nachher</b></p>
+    <p class="film-schaden" id="filmSchaden">Tiefe Kratzer und Abrieb</p>
   </div>
   <div class="band" aria-label="Einsatzbereiche: Automobil, Oldtimer, Möbel, Boote, Flugzeuge"><div class="band-lauf"><span>Automobil</span><svg class="haut" viewBox="0 0 100 126" aria-hidden="true"><path d="M38 0H62C65.1 7 71.4 12.1 79 13.7C86.5 15.3 94.3 13.2 100 8V34C88.7 39.3 81.5 50.6 81.5 63C81.5 75.4 88.7 86.7 100 92V118C94.3 112.9 86.5 110.7 79 112.3C71.4 113.9 65.1 119 62 126H38C34.9 119 28.6 113.9 21 112.3C13.5 110.7 5.7 112.9 0 118V92C11.3 86.7 18.5 75.4 18.5 63C18.5 50.6 11.3 39.3 0 34V8C5.7 13.2 13.5 15.3 21 13.7C28.6 12.1 34.9 7 38 0Z"/></svg><span>Oldtimer</span><svg class="haut" viewBox="0 0 100 126" aria-hidden="true"><path d="M38 0H62C65.1 7 71.4 12.1 79 13.7C86.5 15.3 94.3 13.2 100 8V34C88.7 39.3 81.5 50.6 81.5 63C81.5 75.4 88.7 86.7 100 92V118C94.3 112.9 86.5 110.7 79 112.3C71.4 113.9 65.1 119 62 126H38C34.9 119 28.6 113.9 21 112.3C13.5 110.7 5.7 112.9 0 118V92C11.3 86.7 18.5 75.4 18.5 63C18.5 50.6 11.3 39.3 0 34V8C5.7 13.2 13.5 15.3 21 13.7C28.6 12.1 34.9 7 38 0Z"/></svg><span>Möbel</span><svg class="haut" viewBox="0 0 100 126" aria-hidden="true"><path d="M38 0H62C65.1 7 71.4 12.1 79 13.7C86.5 15.3 94.3 13.2 100 8V34C88.7 39.3 81.5 50.6 81.5 63C81.5 75.4 88.7 86.7 100 92V118C94.3 112.9 86.5 110.7 79 112.3C71.4 113.9 65.1 119 62 126H38C34.9 119 28.6 113.9 21 112.3C13.5 110.7 5.7 112.9 0 118V92C11.3 86.7 18.5 75.4 18.5 63C18.5 50.6 11.3 39.3 0 34V8C5.7 13.2 13.5 15.3 21 13.7C28.6 12.1 34.9 7 38 0Z"/></svg><span>Boote</span><svg class="haut" viewBox="0 0 100 126" aria-hidden="true"><path d="M38 0H62C65.1 7 71.4 12.1 79 13.7C86.5 15.3 94.3 13.2 100 8V34C88.7 39.3 81.5 50.6 81.5 63C81.5 75.4 88.7 86.7 100 92V118C94.3 112.9 86.5 110.7 79 112.3C71.4 113.9 65.1 119 62 126H38C34.9 119 28.6 113.9 21 112.3C13.5 110.7 5.7 112.9 0 118V92C11.3 86.7 18.5 75.4 18.5 63C18.5 50.6 11.3 39.3 0 34V8C5.7 13.2 13.5 15.3 21 13.7C28.6 12.1 34.9 7 38 0Z"/></svg><span>Flugzeuge</span><svg class="haut" viewBox="0 0 100 126" aria-hidden="true"><path d="M38 0H62C65.1 7 71.4 12.1 79 13.7C86.5 15.3 94.3 13.2 100 8V34C88.7 39.3 81.5 50.6 81.5 63C81.5 75.4 88.7 86.7 100 92V118C94.3 112.9 86.5 110.7 79 112.3C71.4 113.9 65.1 119 62 126H38C34.9 119 28.6 113.9 21 112.3C13.5 110.7 5.7 112.9 0 118V92C11.3 86.7 18.5 75.4 18.5 63C18.5 50.6 11.3 39.3 0 34V8C5.7 13.2 13.5 15.3 21 13.7C28.6 12.1 34.9 7 38 0Z"/></svg><span>Automobil</span><svg class="haut" viewBox="0 0 100 126" aria-hidden="true"><path d="M38 0H62C65.1 7 71.4 12.1 79 13.7C86.5 15.3 94.3 13.2 100 8V34C88.7 39.3 81.5 50.6 81.5 63C81.5 75.4 88.7 86.7 100 92V118C94.3 112.9 86.5 110.7 79 112.3C71.4 113.9 65.1 119 62 126H38C34.9 119 28.6 113.9 21 112.3C13.5 110.7 5.7 112.9 0 118V92C11.3 86.7 18.5 75.4 18.5 63C18.5 50.6 11.3 39.3 0 34V8C5.7 13.2 13.5 15.3 21 13.7C28.6 12.1 34.9 7 38 0Z"/></svg><span>Oldtimer</span><svg class="haut" viewBox="0 0 100 126" aria-hidden="true"><path d="M38 0H62C65.1 7 71.4 12.1 79 13.7C86.5 15.3 94.3 13.2 100 8V34C88.7 39.3 81.5 50.6 81.5 63C81.5 75.4 88.7 86.7 100 92V118C94.3 112.9 86.5 110.7 79 112.3C71.4 113.9 65.1 119 62 126H38C34.9 119 28.6 113.9 21 112.3C13.5 110.7 5.7 112.9 0 118V92C11.3 86.7 18.5 75.4 18.5 63C18.5 50.6 11.3 39.3 0 34V8C5.7 13.2 13.5 15.3 21 13.7C28.6 12.1 34.9 7 38 0Z"/></svg><span>Möbel</span><svg class="haut" viewBox="0 0 100 126" aria-hidden="true"><path d="M38 0H62C65.1 7 71.4 12.1 79 13.7C86.5 15.3 94.3 13.2 100 8V34C88.7 39.3 81.5 50.6 81.5 63C81.5 75.4 88.7 86.7 100 92V118C94.3 112.9 86.5 110.7 79 112.3C71.4 113.9 65.1 119 62 126H38C34.9 119 28.6 113.9 21 112.3C13.5 110.7 5.7 112.9 0 118V92C11.3 86.7 18.5 75.4 18.5 63C18.5 50.6 11.3 39.3 0 34V8C5.7 13.2 13.5 15.3 21 13.7C28.6 12.1 34.9 7 38 0Z"/></svg><span>Boote</span><svg class="haut" viewBox="0 0 100 126" aria-hidden="true"><path d="M38 0H62C65.1 7 71.4 12.1 79 13.7C86.5 15.3 94.3 13.2 100 8V34C88.7 39.3 81.5 50.6 81.5 63C81.5 75.4 88.7 86.7 100 92V118C94.3 112.9 86.5 110.7 79 112.3C71.4 113.9 65.1 119 62 126H38C34.9 119 28.6 113.9 21 112.3C13.5 110.7 5.7 112.9 0 118V92C11.3 86.7 18.5 75.4 18.5 63C18.5 50.6 11.3 39.3 0 34V8C5.7 13.2 13.5 15.3 21 13.7C28.6 12.1 34.9 7 38 0Z"/></svg><span>Flugzeuge</span><svg class="haut" viewBox="0 0 100 126" aria-hidden="true"><path d="M38 0H62C65.1 7 71.4 12.1 79 13.7C86.5 15.3 94.3 13.2 100 8V34C88.7 39.3 81.5 50.6 81.5 63C81.5 75.4 88.7 86.7 100 92V118C94.3 112.9 86.5 110.7 79 112.3C71.4 113.9 65.1 119 62 126H38C34.9 119 28.6 113.9 21 112.3C13.5 110.7 5.7 112.9 0 118V92C11.3 86.7 18.5 75.4 18.5 63C18.5 50.6 11.3 39.3 0 34V8C5.7 13.2 13.5 15.3 21 13.7C28.6 12.1 34.9 7 38 0Z"/></svg></div></div>
 </section>
@@ -90,57 +89,65 @@
   </div>
 </section>
 
-<section class="faecher dunkel korn" id="leistungen" style="--n:6">
-  <div class="faecher-buehne">
-    <canvas class="faecher-3d" id="faecher3d" aria-hidden="true"></canvas>
-    <div class="faecher-kopf">
+<section class="karussell dunkel" id="leistungen" style="--n:6">
+  <div class="k-buehne">
+    <div class="k-licht" aria-hidden="true"></div>
+    <canvas class="k-3d" id="karussell3d" aria-hidden="true"></canvas>
+    <span class="k-chip" id="kChip" data-s="vorher" aria-hidden="true"><b class="sv">Vorher</b><b class="sn">Nachher</b></span>
+    <div class="k-kopf">
       <p class="kicker">Unsere Leistungen</p>
-      <h2 class="disp">Ein Material. <em>Sechs Spezialgebiete.</em></h2>
+      <h2 class="disp">Sechs Spezialgebiete. <em>Ein Material.</em></h2>
     </div>
-    <div class="faecher-karten">
-      <article class="fk" data-i="0" style="--c:#1d1c1e">
-        <p class="fk-nr"><span class="fk-chip"></span>No. 01 · Nero</p>
-        <h3 class="disp">Lenkrad­aufbereitung</h3>
-        <p class="fk-claim">Für einen bequemeren Halt!</p>
-        <p class="fk-text">Das wohl am meisten benutzte Bauteil in einem Kfz ist das Lenkrad. Vor allem Fahrzeuge mit viel Laufleistung weisen spröde Lenkräder auf. Das Leder wird rissig und fühlt sich nicht mehr gut an.</p>
-        <a class="fk-mehr" href="leistungen/lenkradaufbereitung.html">Mehr zur Lenkradaufbereitung <svg class="ico pfeil" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
-      </article>
-      <article class="fk" data-i="1" style="--c:#d8c9ae">
-        <p class="fk-nr"><span class="fk-chip"></span>No. 02 · Crema</p>
-        <h3 class="disp">Lederpflege &amp; Flecken­entfernung</h3>
-        <p class="fk-claim">Damit Ihr Leder wieder wie neu aussieht!</p>
-        <p class="fk-text">Nach einiger Zeit kann es vor allem bei häufiger Benutzung des Leders zu Abnutzungsspuren, Flecken oder anderen auffälligen Stellen kommen.</p>
-        <a class="fk-mehr" href="leistungen/lederpflege-fleckenentfernung.html">Mehr zur Pflege <svg class="ico pfeil" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
-      </article>
-      <article class="fk" data-i="2" style="--c:#77797c">
-        <p class="fk-nr"><span class="fk-chip"></span>No. 03 · Grigio</p>
-        <h3 class="disp">Druckstellen­entfernung</h3>
-        <p class="fk-claim">Damit’s nicht mehr drückt!</p>
-        <p class="fk-text">Kindersitze oder andere sperrige Objekte sorgen leider sehr schnell für unschöne Druckstellen auf Ihren Ledersitzen.</p>
-        <a class="fk-mehr" href="leistungen/druckstellenentfernung.html">Mehr zur Druckstellen <svg class="ico pfeil" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
-      </article>
-      <article class="fk" data-i="3" style="--c:#9c5428">
-        <p class="fk-nr"><span class="fk-chip"></span>No. 04 · Cognac</p>
-        <h3 class="disp">Lederreparatur &amp; -farb­anpassung</h3>
-        <p class="fk-claim">Damit Ihre Innenausstattung wieder aufblüht!</p>
-        <p class="fk-text">Nach einigen Jahren kann Ihre Ledereinrichtung die Farbe verlieren: Die Oberfläche wird bleich und wirkt veraltet.</p>
-        <a class="fk-mehr" href="leistungen/lederfarbauffrischung-anpassung.html">Mehr zur Farbe <svg class="ico pfeil" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
-      </article>
-      <article class="fk" data-i="4" style="--c:#5a1a22">
-        <p class="fk-nr"><span class="fk-chip"></span>No. 05 · Bordeaux</p>
-        <h3 class="disp">Riss- &amp; Brandloch­reparatur</h3>
-        <p class="fk-claim">Löcher gehören der Vergangenheit an!</p>
-        <p class="fk-text">Eine brennende Zigarette oder ein scharfer Knopf am Kleidungsstück: Schnell kann es zu Brandlöchern oder Rissen an Ihrem geliebten Ledersitz kommen.</p>
-        <a class="fk-mehr" href="leistungen/riss-brandlochreparatur.html">Mehr zur Risse &amp; Löcher <svg class="ico pfeil" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
-      </article>
-      <article class="fk" data-i="5" style="--c:#2c6c9e">
-        <p class="fk-nr"><span class="fk-chip"></span>No. 06 · Royal</p>
-        <h3 class="disp">Innenraum­verkleidung &amp; Cockpit­reparaturen</h3>
-        <p class="fk-claim">Instandsetzung Ihres Cockpits!</p>
-        <p class="fk-text">Auch die Innenraumverkleidung Ihres Autos, Flugzeuges oder Bootes bearbeiten wir fachgerecht mit unserer Smart-Repair-Technologie.</p>
-        <a class="fk-mehr" href="leistungen/innenraumverkleidung-cockpitreparaturen.html">Mehr zur Cockpit <svg class="ico pfeil" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
-      </article></div>
-    <div class="faecher-punkte"><button class="fp" data-i="0" style="--c:#1d1c1e" aria-label="Lenkradaufbereitung"></button><button class="fp" data-i="1" style="--c:#d8c9ae" aria-label="Lederpflege &amp; Fleckenentfernung"></button><button class="fp" data-i="2" style="--c:#77797c" aria-label="Druckstellenentfernung"></button><button class="fp" data-i="3" style="--c:#9c5428" aria-label="Lederreparatur &amp; -farbanpassung"></button><button class="fp" data-i="4" style="--c:#5a1a22" aria-label="Riss- &amp; Brandlochreparatur"></button><button class="fp" data-i="5" style="--c:#2c6c9e" aria-label="Innenraumverkleidung &amp; Cockpitreparaturen"></button></div>
+    <div class="k-karten">
+        <article class="kk" data-i="0" style="--c:#1d1c1e">
+          <p class="kk-nr"><span>No. 01</span><i></i>Lenkrad</p>
+          <h3 class="disp">Lenkrad­aufbereitung</h3>
+          <p class="kk-claim">Für einen bequemeren Halt!</p>
+          <p class="kk-text">Das wohl am meisten benutzte Bauteil in einem Kfz ist das Lenkrad. Vor allem Fahrzeuge mit viel Laufleistung weisen spröde Lenkräder auf. Das Leder wird rissig und fühlt sich nicht mehr gut an.</p>
+          <p class="kk-bsp">Im Bild: Maserati-Lenkrad · Kranz glänzend abgegriffen</p>
+          <a class="kk-mehr" href="leistungen/lenkradaufbereitung.html"><span>Mehr erfahren</span><svg class="ico pfeil" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+        </article>
+        <article class="kk" data-i="1" style="--c:#d8c9ae">
+          <p class="kk-nr"><span>No. 02</span><i></i>Pflege</p>
+          <h3 class="disp">Lederpflege &amp; Flecken­entfernung</h3>
+          <p class="kk-claim">Damit Ihr Leder wieder wie neu aussieht!</p>
+          <p class="kk-text">Nach einiger Zeit kann es vor allem bei häufiger Benutzung des Leders zu Abnutzungsspuren, Flecken oder anderen auffälligen Stellen kommen.</p>
+          <p class="kk-bsp">Im Bild: Heller Ledersitz · Verschmutzt und fleckig</p>
+          <a class="kk-mehr" href="leistungen/lederpflege-fleckenentfernung.html"><span>Mehr erfahren</span><svg class="ico pfeil" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+        </article>
+        <article class="kk" data-i="2" style="--c:#77797c">
+          <p class="kk-nr"><span>No. 03</span><i></i>Druckstellen</p>
+          <h3 class="disp">Druckstellen­entfernung</h3>
+          <p class="kk-claim">Damit’s nicht mehr drückt!</p>
+          <p class="kk-text">Kindersitze oder andere sperrige Objekte sorgen leider sehr schnell für unschöne Druckstellen auf Ihren Ledersitzen.</p>
+          <p class="kk-bsp">Im Bild: Verkleidung · Druckstelle mit Einriss</p>
+          <a class="kk-mehr" href="leistungen/druckstellenentfernung.html"><span>Mehr erfahren</span><svg class="ico pfeil" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+        </article>
+        <article class="kk" data-i="3" style="--c:#9c5428">
+          <p class="kk-nr"><span>No. 04</span><i></i>Farbe</p>
+          <h3 class="disp">Lederreparatur &amp; -farb­anpassung</h3>
+          <p class="kk-claim">Damit Ihre Innenausstattung wieder aufblüht!</p>
+          <p class="kk-text">Nach einigen Jahren kann Ihre Ledereinrichtung die Farbe verlieren: Die Oberfläche wird bleich und wirkt veraltet.</p>
+          <p class="kk-bsp">Im Bild: Sitzwange in Cognac · Kratzer im hellen Leder</p>
+          <a class="kk-mehr" href="leistungen/lederfarbauffrischung-anpassung.html"><span>Mehr erfahren</span><svg class="ico pfeil" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+        </article>
+        <article class="kk" data-i="4" style="--c:#5a1a22">
+          <p class="kk-nr"><span>No. 05</span><i></i>Risse &amp; Löcher</p>
+          <h3 class="disp">Riss- &amp; Brandloch­reparatur</h3>
+          <p class="kk-claim">Löcher gehören der Vergangenheit an!</p>
+          <p class="kk-text">Eine brennende Zigarette oder ein scharfer Knopf am Kleidungsstück: Schnell kann es zu Brandlöchern oder Rissen an Ihrem geliebten Ledersitz kommen.</p>
+          <p class="kk-bsp">Im Bild: Sportsitz · Leder seitlich aufgerissen</p>
+          <a class="kk-mehr" href="leistungen/riss-brandlochreparatur.html"><span>Mehr erfahren</span><svg class="ico pfeil" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+        </article>
+        <article class="kk" data-i="5" style="--c:#2c6c9e">
+          <p class="kk-nr"><span>No. 06</span><i></i>Cockpit</p>
+          <h3 class="disp">Innenraum­verkleidung &amp; Cockpit­reparaturen</h3>
+          <p class="kk-claim">Instandsetzung Ihres Cockpits!</p>
+          <p class="kk-text">Auch die Innenraumverkleidung Ihres Autos, Flugzeuges oder Bootes bearbeiten wir fachgerecht mit unserer Smart-Repair-Technologie.</p>
+          <p class="kk-bsp">Im Bild: Mercedes-Schaltknauf · Leder abgegriffen</p>
+          <a class="kk-mehr" href="leistungen/innenraumverkleidung-cockpitreparaturen.html"><span>Mehr erfahren</span><svg class="ico pfeil" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+        </article></div>
+    <div class="k-punkte"><button class="kp" data-i="0" aria-label="Lenkradaufbereitung">01</button><button class="kp" data-i="1" aria-label="Lederpflege &amp; Fleckenentfernung">02</button><button class="kp" data-i="2" aria-label="Druckstellenentfernung">03</button><button class="kp" data-i="3" aria-label="Lederreparatur &amp; -farbanpassung">04</button><button class="kp" data-i="4" aria-label="Riss- &amp; Brandlochreparatur">05</button><button class="kp" data-i="5" aria-label="Innenraumverkleidung &amp; Cockpitreparaturen">06</button></div>
   </div>
 </section>
 
@@ -153,15 +160,15 @@
   </div>
   <div class="vh-buehne">
     <div class="vn vn-gross" data-id="farbe-beige" data-auto style="--ar:670/1100">
-  <img class="vn-v" src="assets/img/arbeiten/farbe-beige-v.jpg" alt="Vorher: Beiger Sitz, komplett" width="670" height="1100" loading="lazy" draggable="false">
-  <div class="vn-n"><img src="assets/img/arbeiten/farbe-beige-n.jpg" alt="Nachher: Beiger Sitz, komplett" width="670" height="1100" loading="lazy" draggable="false"></div>
+  <img class="vn-v" src="assets/img/arbeiten/farbe-beige-v.jpg" alt="Vorher: Beiger Sitz" width="670" height="1100" loading="lazy" draggable="false">
+  <div class="vn-n"><img src="assets/img/arbeiten/farbe-beige-n.jpg" alt="Nachher: Beiger Sitz" width="670" height="1100" loading="lazy" draggable="false"></div>
   <span class="vn-griff" aria-hidden="true"><i></i></span>
   <span class="anh vn-l1">Vorher</span><span class="anh anh-blau vn-l2">Nachher</span>
-  <input class="vn-regler" type="range" min="0" max="100" value="50" aria-label="Vorher/Nachher vergleichen: Beiger Sitz, komplett">
+  <input class="vn-regler" type="range" min="0" max="100" value="50" aria-label="Vorher/Nachher vergleichen: Beiger Sitz">
 </div>
-    <p class="vh-info"><b id="vhTitel">Beiger Sitz, komplett</b><span id="vhLeistung">Lederreparatur &amp; -farbanpassung</span></p>
+    <p class="vh-info"><b id="vhTitel">Beiger Sitz</b><span id="vhLeistung">Lederreparatur &amp; -farbanpassung</span></p>
   </div>
-  <div class="vh-leiste wisch" id="vhLeiste"><button class="vt" data-id="farbe-beige" aria-label="Beiger Sitz, komplett"><img src="assets/img/arbeiten/farbe-beige-n.jpg" alt="" loading="lazy" width="670" height="1100"><span>Beiger Sitz, komplett</span></button><button class="vt" data-id="riss-armlehne" aria-label="Armlehne gerissen"><img src="assets/img/arbeiten/riss-armlehne-n.jpg" alt="" loading="lazy" width="611" height="1100"><span>Armlehne gerissen</span></button><button class="vt" data-id="lenkrad-maserati" aria-label="Maserati-Lenkrad"><img src="assets/img/arbeiten/lenkrad-maserati-n.jpg" alt="" loading="lazy" width="550" height="1100"><span>Maserati-Lenkrad</span></button><button class="vt" data-id="cockpit-konsole" aria-label="Mittelkonsole in Rot"><img src="assets/img/arbeiten/cockpit-konsole-n.jpg" alt="" loading="lazy" width="1100" height="549"><span>Mittelkonsole in Rot</span></button><button class="vt" data-id="farbe-cognac" aria-label="Cognac-Leder"><img src="assets/img/arbeiten/farbe-cognac-n.jpg" alt="" loading="lazy" width="550" height="1100"><span>Cognac-Leder</span></button><button class="vt" data-id="brandloch" aria-label="Brandloch"><img src="assets/img/arbeiten/brandloch-n.jpg" alt="" loading="lazy" width="1100" height="550"><span>Brandloch</span></button><button class="vt" data-id="moebel-stuhl" aria-label="Chesterfield-Stuhl"><img src="assets/img/arbeiten/moebel-stuhl-n.jpg" alt="" loading="lazy" width="611" height="1100"><span>Chesterfield-Stuhl</span></button><button class="vt" data-id="druck-sitz" aria-label="Druckstellen vom Kindersitz"><img src="assets/img/arbeiten/druck-sitz-n.jpg" alt="" loading="lazy" width="1100" height="413"><span>Druckstellen vom Kindersitz</span></button><button class="vt" data-id="lenkrad-porsche" aria-label="Porsche-Lenkrad"><img src="assets/img/arbeiten/lenkrad-porsche-n.jpg" alt="" loading="lazy" width="550" height="1100"><span>Porsche-Lenkrad</span></button><button class="vt" data-id="riss-perforiert" aria-label="Riss in Lochleder"><img src="assets/img/arbeiten/riss-perforiert-n.jpg" alt="" loading="lazy" width="1100" height="550"><span>Riss in Lochleder</span></button></div>
+  <div class="vh-leiste wisch" id="vhLeiste"><button class="vt" data-id="farbe-beige" aria-label="Beiger Sitz"><img src="assets/img/arbeiten/farbe-beige-n.jpg" alt="" loading="lazy" width="670" height="1100"><span>Beiger Sitz</span></button><button class="vt" data-id="riss-armlehne" aria-label="Armlehne"><img src="assets/img/arbeiten/riss-armlehne-n.jpg" alt="" loading="lazy" width="611" height="1100"><span>Armlehne</span></button><button class="vt" data-id="cockpit-konsole" aria-label="Mittelkonsole"><img src="assets/img/arbeiten/cockpit-konsole-n.jpg" alt="" loading="lazy" width="1100" height="549"><span>Mittelkonsole</span></button><button class="vt" data-id="brandloch" aria-label="Heller Sitz"><img src="assets/img/arbeiten/brandloch-n.jpg" alt="" loading="lazy" width="1100" height="550"><span>Heller Sitz</span></button><button class="vt" data-id="lenkrad-audi" aria-label="Audi-Lenkrad"><img src="assets/img/arbeiten/lenkrad-audi-n.jpg" alt="" loading="lazy" width="550" height="1100"><span>Audi-Lenkrad</span></button><button class="vt" data-id="moebel-stuhl" aria-label="Chesterfield-Stuhl"><img src="assets/img/arbeiten/moebel-stuhl-n.jpg" alt="" loading="lazy" width="611" height="1100"><span>Chesterfield-Stuhl</span></button><button class="vt" data-id="druck-sitz" aria-label="Ledersitz"><img src="assets/img/arbeiten/druck-sitz-n.jpg" alt="" loading="lazy" width="1100" height="413"><span>Ledersitz</span></button><button class="vt" data-id="riss-perforiert" aria-label="Lochleder"><img src="assets/img/arbeiten/riss-perforiert-n.jpg" alt="" loading="lazy" width="1100" height="550"><span>Lochleder</span></button><button class="vt" data-id="farbe-wange" aria-label="Sitzwange"><img src="assets/img/arbeiten/farbe-wange-n.jpg" alt="" loading="lazy" width="550" height="1100"><span>Sitzwange</span></button><button class="vt" data-id="cockpit-knauf" aria-label="Schaltknauf"><img src="assets/img/arbeiten/cockpit-knauf-n.jpg" alt="" loading="lazy" width="550" height="1100"><span>Schaltknauf</span></button></div>
   <a class="knopf knopf-leder nur-klein" href="galerie.html"><span>Ganze Galerie</span><svg class="ico pfeil" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
 </section>
 
@@ -234,7 +241,7 @@
       <div><h3>Kontakt</h3><a href="tel:+4917680405247">0176 80405247</a><a href="mailto:info@coloroyal.de">info@coloroyal.de</a><a class="js-wa" href="https://wa.me/4917680405247?text=Hallo%20ColoRoyal%2C%20ich%20h%C3%A4tte%20gerne%20eine%20Einsch%C3%A4tzung%20zu%20einem%20Lederschaden.%20Fotos%20schicke%20ich%20mit." target="_blank" rel="noopener">WhatsApp</a><a href="https://instagram.com/coloroyal.de" target="_blank" rel="noopener">Instagram</a><a href="https://www.facebook.com/coloroyal/" target="_blank" rel="noopener">Facebook</a></div>
       <div class="fuss-l"><h3>Leistungen</h3><a href="leistungen/lenkradaufbereitung.html">Lenkradaufbereitung</a><a href="leistungen/lederpflege-fleckenentfernung.html">Lederpflege &amp; Fleckenentfernung</a><a href="leistungen/druckstellenentfernung.html">Druckstellenentfernung</a><a href="leistungen/lederfarbauffrischung-anpassung.html">Lederreparatur &amp; -farbanpassung</a><a href="leistungen/riss-brandlochreparatur.html">Riss- &amp; Brandlochreparatur</a><a href="leistungen/innenraumverkleidung-cockpitreparaturen.html">Innenraumverkleidung &amp; Cockpitreparaturen</a></div>
     </div>
-    <div class="fuss-unten"><span>© 2026 ColoRoyal Smart Repair · Leder- &amp; Vinylreparaturen in Lampertheim</span><span><a href="galerie.html">Galerie</a><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a></span></div>
+    <div class="fuss-unten"><span>© 2026 ColoRoyal Smart Repair · Leder- &amp; Vinylreparaturen in Lampertheim</span><span><a href="galerie.html">Galerie</a><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a><a href="einstellungen/" rel="nofollow">Einstellungen</a></span></div>
   </div>
 </footer>
 <nav class="leiste" aria-label="Schnellkontakt">
@@ -243,8 +250,8 @@
   <a href="kontakt.html"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/></svg><span>Anfrage</span></a>
 </nav>
 <script type="module" src="assets/js/site.js"></script>
-<script type="module" src="assets/js/sitz.js"></script>
-<script type="module" src="assets/js/faecher.js"></script>
+<script type="module" src="assets/js/film.js"></script>
+<script type="module" src="assets/js/karussell.js"></script>
 <script type="module" src="assets/js/patch.js"></script>
 </body>
 </html>

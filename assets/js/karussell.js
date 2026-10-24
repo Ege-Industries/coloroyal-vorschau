@@ -1,0 +1,184 @@
+// Startseite „Unsere Leistungen“: 3D-Trommel aus sechs echten Arbeiten. Scrollen dreht die Trommel,
+// die vordere Tafel wird vor den Augen repariert (Vorher → Nachher), darunter spiegelt der Boden.
+import * as THREE from 'three';
+import { DATEN } from './daten.js';
+
+const BASE = document.body.dataset.base || '';
+const sektion = document.getElementById('leistungen');
+const canvas = document.getElementById('karussell3d');
+const karten = [...document.querySelectorAll('.kk')];
+const punkte = [...document.querySelectorAll('.kp')];
+const chip = document.getElementById('kChip');
+const L = DATEN.leistungen, N = L.length;
+const TXT = DATEN.texte;
+const RUHIG = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const k01 = x => Math.min(1, Math.max(0, x));
+const glatt = (a, b, x) => { const t = k01((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+
+// Scroll → Position r (0 … N-1) mit Ruhephasen, damit jede Tafel kurz stehen bleibt
+const stand = { r: 0, rot: 0, aktiv: -1 };
+function scrollStand() {
+  const b = sektion.getBoundingClientRect(), weg = Math.max(1, b.height - innerHeight);
+  const p = k01(-b.top / weg);
+  stand.r = p * (N - 1 + 0.7) - 0.35;
+  const rc = Math.min(N - 1, Math.max(0, stand.r)), i = Math.floor(rc), f = rc - i;
+  stand.rot = Math.min(N - 1, i + glatt(0.3, 0.7, f));
+  const k = Math.round(stand.rot);
+  if (k !== stand.aktiv) {
+    stand.aktiv = k;
+    karten.forEach((c, j) => c.classList.toggle('an', j === k));
+    punkte.forEach((c, j) => c.classList.toggle('an', j === k));
+  }
+}
+const reparatur = i => glatt(i - 0.3, i + 0.22, stand.r);
+
+if (sektion) {
+  addEventListener('scroll', scrollStand, { passive: true });
+  addEventListener('resize', scrollStand);
+  scrollStand();
+  punkte.forEach((b, i) => b.addEventListener('click', () => {
+    const top = sektion.getBoundingClientRect().top + scrollY, weg = sektion.offsetHeight - innerHeight;
+    scrollTo({ top: top + weg * ((i + 0.35) / (N - 1 + 0.7)) + 2, behavior: 'smooth' });
+  }));
+  if (canvas) {
+    const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { io.disconnect(); start(); } }, { rootMargin: '600px' });
+    io.observe(sektion);
+  }
+}
+
+const VERT = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }`;
+const FRAG = `
+varying vec2 vUv;
+uniform sampler2D tV, tN;
+uniform float uP, uT, uAsp, uImgAsp, uDim, uSpiegel, uBereit;
+uniform vec2 uFokus;
+float h21(vec2 p){ p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
+float n2(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);
+  return mix(mix(h21(i), h21(i + vec2(1, 0)), f.x), mix(h21(i + vec2(0, 1)), h21(i + vec2(1, 1)), f.x), f.y); }
+float fbm(vec2 p){ float v = 0., a = .5; for (int k = 0; k < 4; k++) { v += a * n2(p); p = p * 2.03 + 3.7; a *= .5; } return v; }
+vec3 gradeV(vec3 c){ float l = dot(c, vec3(.299, .587, .114)); c = mix(vec3(l), c, .62); c *= vec3(.96, .99, 1.04); return (c - .5) * .9 + .46; }
+vec3 gradeN(vec3 c){ float l = dot(c, vec3(.299, .587, .114)); c = mix(vec3(l), c, 1.14); c *= vec3(1.04, 1., .96); return (c - .5) * 1.07 + .5; }
+float rr(vec2 p, vec2 b, float r){ vec2 q = abs(p) - b + r; return length(max(q, 0.)) + min(max(q.x, q.y), 0.) - r; }
+void main(){
+  vec2 uv = vUv;
+  vec2 k = uAsp > uImgAsp ? vec2(1., uImgAsp / uAsp) : vec2(uAsp / uImgAsp, 1.);
+  vec2 iuv = uFokus + (uv - .5) * k;
+  float bias = uSpiegel * 3.;
+  vec3 cv = gradeV(texture2D(tV, iuv, bias).rgb), cn = gradeN(texture2D(tN, iuv, bias).rgb);
+  vec2 q = vec2((uv.x - .5) * uAsp, uv.y - .5);
+  vec2 dir = normalize(vec2(1., .55));
+  float spann = .5 * (dir.x * uAsp + dir.y) + .16;
+  float n = (fbm(q * 4.2 + vec2(0., uT * .2)) - .5) * .2;
+  float d = dot(q, dir) + n - mix(-spann, spann, uP);
+  float m = 1. - smoothstep(-.008, .008, d);
+  vec3 c = mix(cv, cn, m);
+  float aktiv = step(.001, uP) * step(uP, .999);
+  c += aktiv * (vec3(.35, .71, .91) * exp(-d * d / .01) * .5 + vec3(.9, .97, 1.) * exp(-d * d / .0005) * 1.05);
+  float funke = step(.994, h21(floor(uv * vec2(260., 400.)) + floor(uT * 20.))) * exp(-pow((d - .03) / .045, 2.)) * aktiv;
+  c += funke * vec3(.85, .95, 1.) * 1.5;
+  vec2 b = vec2(.5 * uAsp, .5);
+  float sd = rr(q, b, .045);
+  float alpha = 1. - smoothstep(-.003, .001, sd);
+  float nahtD = abs(sd + .024);
+  float koord = abs(q.x) > b.x - .07 ? q.y : q.x;
+  float strich = step(.42, fract(koord * 30.));
+  c = mix(c, vec3(.44, .76, .94), (1. - smoothstep(.0016, .0042, nahtD)) * strich * .85);
+  c *= .8 + .2 * smoothstep(0., -.14, sd);
+  c *= 1. - uDim * .66;
+  c *= uBereit;
+  if (uSpiegel > .5) alpha *= .3 * (1. - smoothstep(0., .5, uv.y));
+  else if (alpha < .5) discard;
+  gl_FragColor = vec4(c, alpha);
+}`;
+
+async function start() {
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, innerWidth < 760 ? 1.6 : 1.8));
+  renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+  const scene = new THREE.Scene();
+  const cam = new THREE.PerspectiveCamera(30, 1, 0.1, 60);
+  const R = 3.3, SCHRITT = 0.66, PW = 1.3, PH = 2.08, BODEN = -PH / 2 - 0.05;
+
+  const geo = new THREE.PlaneGeometry(PW, PH, 48, 1);
+  { const p = geo.attributes.position; for (let i = 0; i < p.count; i++) { const a = p.getX(i) / R; p.setX(i, R * Math.sin(a)); p.setZ(i, R * Math.cos(a) - R); } }
+  const lader = new THREE.TextureLoader();
+  const textur = url => new Promise(ok => lader.load(url, t => { t.colorSpace = THREE.NoColorSpace; t.anisotropy = 8; t.generateMipmaps = true; t.minFilter = THREE.LinearMipmapLinearFilter; ok(t); }, undefined, () => ok(null)));
+
+  const trommel = new THREE.Group(); trommel.position.z = -R; scene.add(trommel);
+  const tafeln = L.map((l, i) => {
+    const id = l.karussell, f = (TXT[id] && TXT[id].fokus) || [0.5, 0.5];
+    const uni = { tV: { value: null }, tN: { value: null }, uP: { value: 0 }, uT: { value: 0 }, uAsp: { value: PW / PH }, uImgAsp: { value: 0.5 }, uDim: { value: 0 }, uSpiegel: { value: 0 }, uBereit: { value: 0 }, uFokus: { value: new THREE.Vector2(f[0], 1 - f[1]) } };
+    const mat = new THREE.ShaderMaterial({ uniforms: uni, vertexShader: VERT, fragmentShader: FRAG, side: THREE.DoubleSide });
+    const spiegelUni = { ...uni, uSpiegel: { value: 1 } };   // teilt alle anderen Uniform-Objekte mit der Tafel
+    const sMat = new THREE.ShaderMaterial({ uniforms: spiegelUni, vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false, side: THREE.DoubleSide });
+    const a = i * SCHRITT;
+    const halter = new THREE.Group(); halter.rotation.y = a; trommel.add(halter);
+    const m = new THREE.Mesh(geo, mat); m.position.z = R; halter.add(m);
+    const s = new THREE.Mesh(geo, sMat); s.position.set(0, 2 * BODEN, R); s.scale.y = -1; halter.add(s);
+    Promise.all([textur(`${BASE}assets/img/arbeiten-hd/${id}-v.jpg`), textur(`${BASE}assets/img/arbeiten-hd/${id}-n.jpg`)]).then(([v, n]) => {
+      if (!v || !n) return;
+      uni.tV.value = v; uni.tN.value = n; uni.uImgAsp.value = v.image.width / v.image.height;
+      // Fokus so begrenzen, dass die Tafel immer ganz im Foto liegt
+      const k = uni.uAsp.value > uni.uImgAsp.value ? [1, uni.uImgAsp.value / uni.uAsp.value] : [uni.uAsp.value / uni.uImgAsp.value, 1];
+      uni.uFokus.value.set(Math.min(1 - k[0] / 2, Math.max(k[0] / 2, f[0])), Math.min(1 - k[1] / 2, Math.max(k[1] / 2, 1 - f[1])));
+      uni.bereitZiel = 1;
+    });
+    return { uni, spiegelUni, a };
+  });
+  // Lichtpfütze auf dem Boden unter der vorderen Tafel
+  const pf = document.createElement('canvas'); pf.width = pf.height = 128;
+  { const x = pf.getContext('2d'), g = x.createRadialGradient(64, 64, 2, 64, 64, 64); g.addColorStop(0, 'rgba(90,181,231,.55)'); g.addColorStop(.5, 'rgba(90,181,231,.12)'); g.addColorStop(1, 'rgba(90,181,231,0)'); x.fillStyle = g; x.fillRect(0, 0, 128, 128); }
+  const pfuetze = new THREE.Mesh(new THREE.PlaneGeometry(PW * 2.6, 1.6), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(pf), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+  pfuetze.rotation.x = -Math.PI / 2; pfuetze.position.set(0, BODEN, 0.1); scene.add(pfuetze);
+
+  let w0 = 0, h0 = 0;
+  const ausrichten = () => {
+    const r = canvas.getBoundingClientRect(), w = r.width, h = r.height;
+    renderer.setSize(w, h, false);
+    const asp = w / h, schmal = asp < 0.9;
+    cam.aspect = asp;
+    const ziel = schmal ? { cx: w * 0.5, cy: h * 0.45, hoch: h * (h < 720 ? 0.36 : 0.44), breit: w * 0.66 } : { cx: w * (asp > 1.5 ? 0.64 : 0.62), cy: h * 0.47, hoch: h * 0.6, breit: w * 0.3 };
+    const t = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2));
+    const d = Math.max((PH / 2) / t * (h / ziel.hoch), (PW / 2) / (t * asp) * (w / ziel.breit));
+    cam.position.set(0, 0.32 + d * 0.035, d); cam.lookAt(0, -0.06, 0);
+    cam.setViewOffset(w, h, -(ziel.cx - w / 2), -(ziel.cy - h / 2), w, h);
+    cam.updateProjectionMatrix();
+    w0 = w; h0 = h;
+  };
+  ausrichten();
+  new ResizeObserver(ausrichten).observe(canvas);
+  let sicht = true;
+  new IntersectionObserver(es => { sicht = es[0].isIntersecting; }).observe(canvas);
+  const maus = { x: 0, y: 0 };
+  addEventListener('pointermove', e => { maus.x = e.clientX / innerWidth - 0.5; maus.y = e.clientY / innerHeight - 0.5; }, { passive: true });
+
+  const ecke = new THREE.Vector3();
+  let rot = stand.rot, last = performance.now();
+  const tick = now => {
+    requestAnimationFrame(tick);
+    const dt = Math.min(0.05, Math.max(0, (now - last) / 1000)); last = now;
+    if (!sicht || document.hidden) return;
+    const t = now / 1000;
+    rot += (stand.rot - rot) * Math.min(1, dt * 7);
+    trommel.rotation.y = -rot * SCHRITT + (RUHIG ? 0 : maus.x * 0.08);
+    trommel.rotation.x = RUHIG ? 0 : maus.y * 0.03;
+    tafeln.forEach((tf, i) => {
+      const p = reparatur(i);
+      const abst = Math.abs(i - rot);
+      tf.uni.uP.value = p; tf.uni.uT.value = t % 1000;
+      tf.uni.uDim.value = glatt(0.15, 1.1, abst);
+      tf.uni.uBereit.value += ((tf.uni.bereitZiel || 0) - tf.uni.uBereit.value) * Math.min(1, dt * 3);
+    });
+    renderer.render(scene, cam);
+    // Vorher/Nachher-Etikett an der linken oberen Ecke der vorderen Tafel
+    if (chip) {
+      const k = Math.round(rot), p = reparatur(k);
+      ecke.set(-PW / 2, PH / 2, 0).project(cam);
+      chip.style.transform = `translate(${Math.round((ecke.x * 0.5 + 0.5) * w0) + 12}px, ${Math.round((-ecke.y * 0.5 + 0.5) * h0) + 12}px)`;
+      chip.dataset.s = p > 0.5 ? 'nachher' : 'vorher';
+      chip.style.opacity = Math.abs(rot - k) < 0.12 ? 1 : 0;
+    }
+  };
+  requestAnimationFrame(tick);
+  sektion.classList.add('gl');
+}

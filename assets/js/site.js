@@ -1,5 +1,6 @@
 // ColoRoyal – gemeinsame Seitenlogik (Menü, Vorher/Nachher, Galerie, Schadens-Check, Anfrage)
 import { DATEN } from './daten.js';
+import { auswahl } from './auswahl.js';
 
 const BASE = document.body.dataset.base || '';
 const $ = (s, r = document) => r.querySelector(s);
@@ -98,10 +99,20 @@ function leiste(leisteEl, buehneVn, info) {
   return wahl;
 }
 
-leiste($('#vhLeiste'), $('#vorher-nachher .vn-gross'), p => {
-  $('#vhTitel').textContent = p.titel;
-  $('#vhLeistung').textContent = L[p.leistung]?.name || 'Möbel';
-});
+// „Sehen Sie selbst“: welche Arbeiten laufen, bestimmt die Werkstatt in den Einstellungen
+{
+  const vhL = $('#vhLeiste');
+  const wahl = leiste(vhL, $('#vorher-nachher .vn-gross'), p => {
+    $('#vhTitel').textContent = p.titel;
+    $('#vhLeistung').textContent = L[p.leistung]?.name || 'Möbel';
+  });
+  if (vhL) auswahl().then(a => {
+    const ids = a.vorherNachher;
+    if (ids.join() === $$('.vt', vhL).map(b => b.dataset.id).join()) return;
+    vhL.innerHTML = ids.map(id => { const p = P[id]; return `<button class="vt" data-id="${id}" aria-label="${p.titel}"><img src="${BASE}assets/img/arbeiten/${id}-n.jpg" alt="" loading="lazy" width="${p.w}" height="${p.h}"><span>${p.titel}</span></button>`; }).join('');
+    wahl(ids[0]);
+  });
+}
 
 const gLeiste = $('#gLeiste');
 if (gLeiste) {

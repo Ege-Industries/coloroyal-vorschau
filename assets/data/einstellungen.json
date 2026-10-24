@@ -1,0 +1,21 @@
+{
+ "film": [
+  "farbe-cognac",
+  "riss-sitz",
+  "lenkrad-porsche",
+  "farbe-schwarz",
+  "moebel-stuhl"
+ ],
+ "vorherNachher": [
+  "farbe-beige",
+  "riss-armlehne",
+  "cockpit-konsole",
+  "brandloch",
+  "lenkrad-audi",
+  "moebel-stuhl",
+  "druck-sitz",
+  "riss-perforiert",
+  "farbe-wange",
+  "cockpit-knauf"
+ ]
+}
