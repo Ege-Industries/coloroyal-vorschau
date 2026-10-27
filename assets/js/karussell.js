@@ -33,7 +33,9 @@ function scrollStand() {
 }
 // Reparatur läuft auf Zeit, nicht auf Scroll: erst wenn eine Tafel vorne stillsteht.
 // So sieht man immer zuerst das Vorher, egal wie schnell gescrollt wird.
-const VORHER_MS = 700, REP_MS = 1700;
+// Vorher bleibt mindestens VORHER_MS stehen; danach treibt Scrollen die Reparatur an (nie schneller als MIN_REP_S),
+// und wer stehen bleibt, sieht sie nach AUTO_MS von selbst zu Ende laufen.
+const VORHER_MS = 450, MIN_REP_S = 1.2, AUTO_MS = 900, AUTO_REP_MS = 1300;
 const sanft = t => -(Math.cos(Math.PI * t) - 1) / 2;
 
 if (sektion) {
@@ -168,10 +170,18 @@ async function start() {
     trommel.rotation.x = RUHIG ? 0 : maus.y * 0.03;
     tafeln.forEach((tf, i) => {
       const abst = Math.abs(i - rot);
-      if (abst < 0.04 && stand.drin) { if (tf.seit == null) tf.seit = now; }
-      else if (abst > 0.5 || !stand.drin) { tf.seit = null; tf.p = 0; }
-      if (tf.seit != null) tf.p = RUHIG ? 1 : sanft(k01((now - tf.seit - VORHER_MS) / REP_MS));
-      const p = tf.p || 0;
+      if (abst < 0.3 && stand.drin) { if (tf.seit == null) tf.seit = now; }
+      else if (abst > 0.6 || !stand.drin) { tf.seit = null; tf.p = 0; }
+      let ziel = 0;
+      if (tf.seit != null) {
+        const da = now - tf.seit;
+        const perScroll = glatt(i - 0.25, i + 0.2, stand.r);
+        const vonSelbst = k01((da - AUTO_MS) / AUTO_REP_MS);
+        ziel = RUHIG ? 1 : da < VORHER_MS ? 0 : Math.max(perScroll, vonSelbst);
+      }
+      tf.p = tf.p || 0;
+      tf.p = ziel > tf.p ? Math.min(ziel, tf.p + dt / MIN_REP_S) : Math.max(ziel, tf.p - dt * 3);
+      const p = sanft(tf.p);
       tf.uni.uP.value = p; tf.uni.uT.value = t % 1000;
       tf.uni.uDim.value = glatt(0.15, 1.1, abst);
       tf.uni.uBereit.value += ((tf.uni.bereitZiel || 0) - tf.uni.uBereit.value) * Math.min(1, dt * 3);
@@ -179,7 +189,7 @@ async function start() {
     renderer.render(scene, cam);
     // Vorher/Nachher-Etikett an der linken oberen Ecke der vorderen Tafel
     if (chip) {
-      const k = Math.round(rot), p = tafeln[k].p || 0;
+      const k = Math.round(rot), p = sanft(tafeln[k].p || 0);
       ecke.set(-PW / 2, PH / 2, 0).project(cam);
       chip.style.transform = `translate(${Math.round((ecke.x * 0.5 + 0.5) * w0) + 12}px, ${Math.round((-ecke.y * 0.5 + 0.5) * h0) + 12}px)`;
       chip.dataset.s = p > 0.5 ? 'nachher' : 'vorher';
