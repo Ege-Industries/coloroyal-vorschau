@@ -1046,3 +1046,10 @@ h1.disp { font-size: clamp(40px, 10.6vw, 88px); }
   .fr summary { font-size: 19px; padding: 11px 0; }
   .fr p { font-size: 13px; margin-bottom: 12px; }
 }
+
+/* Trommel in Schritten: Vorher → Nachher → nächste Tafel. Jeder Schritt rastet ein, nichts wird übersprungen. */
+.karussell { position: relative; height: calc(var(--n) * 200svh); }
+.k-stopp { position: absolute; left: 0; width: 1px; height: 100svh; pointer-events: none; }
+/* Während die Trommel eingehängt ist: Seite steht still (stoppt auch den Schwung am iPhone), Gesten steuern die Schritte */
+html.trommel-fest { overflow: hidden; overscroll-behavior: none; }
+html { scrollbar-gutter: stable; }

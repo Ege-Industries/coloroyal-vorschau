@@ -1,5 +1,7 @@
-// Startseite „Unsere Leistungen“: 3D-Trommel aus sechs echten Arbeiten. Scrollen dreht die Trommel,
-// die vordere Tafel wird vor den Augen repariert (Vorher → Nachher), darunter spiegelt der Boden.
+// Startseite „Unsere Leistungen“: 3D-Trommel aus sechs echten Arbeiten – in Schritten:
+// Geste → Vorher. Geste → dieselbe Tafel wird repariert (Nachher). Geste → Trommel dreht zur nächsten Tafel (Vorher).
+// Solange die Trommel den Bildschirm füllt, ist sie „eingehängt“: jede Geste (Wischen, Mausrad, Taste) = genau ein Schritt,
+// egal wie schnell. Am Anfang bzw. Ende geht die Seite normal weiter.
 import * as THREE from 'three';
 import { DATEN } from './daten.js';
 
@@ -15,37 +17,97 @@ const RUHIG = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const k01 = x => Math.min(1, Math.max(0, x));
 const glatt = (a, b, x) => { const t = k01((x - a) / (b - a)); return t * t * (3 - 2 * t); };
 
-// Scroll → Position r (0 … N-1) mit Ruhephasen, damit jede Tafel kurz stehen bleibt
-const stand = { r: 0, rot: 0, aktiv: -1, drin: false };
-function scrollStand() {
-  const b = sektion.getBoundingClientRect(), weg = Math.max(1, b.height - innerHeight);
-  stand.drin = b.top <= 2 && b.bottom >= innerHeight - 2;
-  const p = k01(-b.top / weg);
-  stand.r = p * (N - 1 + 0.7) - 0.35;
-  const rc = Math.min(N - 1, Math.max(0, stand.r)), i = Math.floor(rc), f = rc - i;
-  stand.rot = Math.min(N - 1, i + glatt(0.3, 0.7, f));
-  const k = Math.round(stand.rot);
-  if (k !== stand.aktiv) {
-    stand.aktiv = k;
-    karten.forEach((c, j) => c.classList.toggle('an', j === k));
-    punkte.forEach((c, j) => c.classList.toggle('an', j === k));
+// Schritt k (0 … 2N-1): Tafel = floor(k/2), ungerade = Nachher
+const stopps = sektion ? [...sektion.querySelectorAll('.k-stopp')] : [];
+const LETZT = 2 * N - 1;
+const stand = { k: 0, aktiv: -1, gesperrt: false, sofort: false };
+window.__trommel = stand;   // nur zum Prüfen
+const REP_S = 1.5;   // Dauer der Nachher-Animation
+const sanft = t => -(Math.cos(Math.PI * t) - 1) / 2;
+const oben = () => sektion.getBoundingClientRect().top + scrollY;
+const ende = () => oben() + sektion.offsetHeight - innerHeight;
+const stoppY = k => oben() + (stopps[k]?.offsetTop || 0);
+
+function zeigen() {
+  const a = Math.floor(stand.k / 2);
+  if (a !== stand.aktiv) {
+    stand.aktiv = a;
+    karten.forEach((c, j) => c.classList.toggle('an', j === a));
+    punkte.forEach((c, j) => c.classList.toggle('an', j === a));
   }
 }
-// Reparatur läuft auf Zeit, nicht auf Scroll: erst wenn eine Tafel vorne stillsteht.
-// So sieht man immer zuerst das Vorher, egal wie schnell gescrollt wird.
-// Vorher bleibt mindestens VORHER_MS stehen; danach treibt Scrollen die Reparatur an (nie schneller als MIN_REP_S),
-// und wer stehen bleibt, sieht sie nach AUTO_MS von selbst zu Ende laufen.
-const VORHER_MS = 450, MIN_REP_S = 1.2, AUTO_MS = 900, AUTO_REP_MS = 1300;
-const sanft = t => -(Math.cos(Math.PI * t) - 1) / 2;
+let letzterSchritt = 0, ruheBis = 0, letztesY = 0;
+function sperren(k, sofort = k > 0) {
+  stand.k = k; stand.gesperrt = true; stand.sofort = sofort; zeigen();
+  document.documentElement.classList.add('trommel-fest');
+  scrollTo({ top: stoppY(k), behavior: 'instant' });
+  letzterSchritt = performance.now();
+}
+function entsperren() { stand.gesperrt = false; document.documentElement.classList.remove('trommel-fest'); }
+function verlassen(r) {
+  entsperren(); ruheBis = performance.now() + 1200;
+  scrollTo({ top: r > 0 ? ende() + innerHeight : oben() - innerHeight, behavior: 'smooth' });
+}
+function schritt(r, quelle = '') {
+  const n = stand.k + r;
+  if (n < 0) return verlassen(-1);
+  if (n > LETZT) return verlassen(1);
+  stand.k = n; zeigen();
+  scrollTo({ top: stoppY(n), behavior: 'instant' });
+  letzterSchritt = performance.now();
+}
+// Hineinscrollen erkennen (von oben → Schritt 0, von unten → letzter Schritt)
+function beimScrollen() {
+  const y = scrollY;
+  if (!stand.gesperrt && performance.now() > ruheBis) {
+    const o = oben(), e = ende();
+    if (letztesY < o - 1 && y >= o - 1 && y <= e) sperren(0);
+    else if (letztesY > e + 1 && y <= e + 1 && y >= o) sperren(LETZT);
+    else if (y > o + 2 && y < e - 2) { let k = 0, bd = Infinity; stopps.forEach((s, j) => { const d = Math.abs(o + s.offsetTop - y); if (d < bd) { bd = d; k = j; } }); sperren(k); }
+  }
+  letztesY = scrollY;
+}
+// Gesten → Schritte
+let radZuletzt = 0, beruehrY = null;
+let radBetragZuletzt = 0;
+function amRad(e) {
+  if (!stand.gesperrt) return;
+  e.preventDefault();
+  const jetzt = performance.now(), betrag = Math.abs(e.deltaY);
+  // neue Geste: nach einer Pause – oder wenn mitten im abklingenden Nachlauf wieder kräftig angeschoben wird
+  const neueGeste = jetzt - radZuletzt > 220 || (betrag > 12 && betrag > radBetragZuletzt * 2.5);
+  radZuletzt = jetzt; radBetragZuletzt = betrag;
+  if (betrag < 2) return;
+  if (neueGeste && jetzt - letzterSchritt > 450) schritt(Math.sign(e.deltaY), 'rad');
+}
+function amBeruehrStart(e) { beruehrY = stand.gesperrt ? e.touches[0].clientY : null; }
+function amBeruehrZug(e) { if (stand.gesperrt && e.cancelable) e.preventDefault(); }
+function amBeruehrEnde(e) {
+  if (!stand.gesperrt || beruehrY == null) return;
+  const dy = beruehrY - (e.changedTouches[0]?.clientY ?? beruehrY);
+  beruehrY = null;
+  if (Math.abs(dy) > 30 && performance.now() - letzterSchritt > 250) schritt(Math.sign(dy), 'touch' + e.type);
+}
+function amTaste(e) {
+  if (!stand.gesperrt) return;
+  const runter = ['ArrowDown', 'PageDown', ' ', 'Spacebar'].includes(e.key), hoch = ['ArrowUp', 'PageUp'].includes(e.key);
+  if (!runter && !hoch) return;
+  e.preventDefault(); schritt(runter ? 1 : -1, 'taste');
+}
 
 if (sektion) {
-  addEventListener('scroll', scrollStand, { passive: true });
-  addEventListener('resize', scrollStand);
-  scrollStand();
-  punkte.forEach((b, i) => b.addEventListener('click', () => {
-    const top = sektion.getBoundingClientRect().top + scrollY, weg = sektion.offsetHeight - innerHeight;
-    scrollTo({ top: top + weg * ((i + 0.35) / (N - 1 + 0.7)) + 2, behavior: 'smooth' });
-  }));
+  letztesY = scrollY;
+  addEventListener('scroll', beimScrollen, { passive: true });
+  addEventListener('wheel', amRad, { passive: false });
+  addEventListener('touchstart', amBeruehrStart, { passive: true });
+  addEventListener('touchmove', amBeruehrZug, { passive: false });
+  addEventListener('touchend', amBeruehrEnde, { passive: true });
+  addEventListener('keydown', amTaste);
+  // Sprungmarken (Menü, Knöpfe) dürfen durch die Trommel hindurch
+  document.addEventListener('click', e => { if (e.target.closest('a[href*="#"], .kopf a, .menue a')) { entsperren(); ruheBis = performance.now() + 1500; } }, true);
+  addEventListener('resize', () => { if (stand.gesperrt) scrollTo({ top: stoppY(stand.k), behavior: 'instant' }); });
+  beimScrollen();
+  punkte.forEach((b, i) => b.addEventListener('click', () => { if (!stand.gesperrt) sperren(2 * i); else { stand.k = 2 * i; zeigen(); scrollTo({ top: stoppY(2 * i), behavior: 'instant' }); } }));
   if (canvas) {
     const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { io.disconnect(); start(); } }, { rootMargin: '600px' });
     io.observe(sektion);
@@ -159,28 +221,27 @@ async function start() {
   addEventListener('pointermove', e => { maus.x = e.clientX / innerWidth - 0.5; maus.y = e.clientY / innerHeight - 0.5; }, { passive: true });
 
   const ecke = new THREE.Vector3();
-  let rot = stand.rot, last = performance.now();
+  let rot = Math.floor(stand.k / 2), last = performance.now();
   const tick = now => {
     requestAnimationFrame(tick);
     const dt = Math.min(0.05, Math.max(0, (now - last) / 1000)); last = now;
     if (!sicht || document.hidden) return;
     const t = now / 1000;
-    rot += (stand.rot - rot) * Math.min(1, dt * 7);
+    const zielTafel = Math.floor(stand.k / 2);
+    // Einstieg von unten / nach Neuladen: ohne Durchdrehen direkt im richtigen Zustand
+    if (stand.sofort) { rot = zielTafel; tafeln.forEach((tf, i) => { tf.p = i < zielTafel ? 1 : i > zielTafel ? 0 : stand.k % 2; }); stand.sofort = false; }
+    rot += (zielTafel - rot) * Math.min(1, dt * 4.2);
+    if (Math.abs(zielTafel - rot) < 0.001) rot = zielTafel;
     trommel.rotation.y = -rot * SCHRITT + (RUHIG ? 0 : maus.x * 0.08);
     trommel.rotation.x = RUHIG ? 0 : maus.y * 0.03;
     tafeln.forEach((tf, i) => {
       const abst = Math.abs(i - rot);
-      if (abst < 0.3 && stand.drin) { if (tf.seit == null) tf.seit = now; }
-      else if (abst > 0.6 || !stand.drin) { tf.seit = null; tf.p = 0; }
-      let ziel = 0;
-      if (tf.seit != null) {
-        const da = now - tf.seit;
-        const perScroll = glatt(i - 0.25, i + 0.2, stand.r);
-        const vonSelbst = k01((da - AUTO_MS) / AUTO_REP_MS);
-        ziel = RUHIG ? 1 : da < VORHER_MS ? 0 : Math.max(perScroll, vonSelbst);
-      }
+      // Ziel: Tafeln vor der aktuellen sind fertig, die aktuelle nur im ungeraden Schritt, die danach noch nicht
+      const pz = i < zielTafel ? 1 : i > zielTafel ? 0 : stand.k % 2;
       tf.p = tf.p || 0;
-      tf.p = ziel > tf.p ? Math.min(ziel, tf.p + dt / MIN_REP_S) : Math.max(ziel, tf.p - dt * 3);
+      if (RUHIG) tf.p = pz;
+      else if (pz > tf.p) tf.p = (i === zielTafel && abst > 0.08) ? tf.p : i < zielTafel && abst > 0.6 ? 1 : Math.min(1, tf.p + dt / REP_S);
+      else tf.p = Math.max(pz, tf.p - dt / 0.6);
       const p = sanft(tf.p);
       tf.uni.uP.value = p; tf.uni.uT.value = t % 1000;
       tf.uni.uDim.value = glatt(0.15, 1.1, abst);
