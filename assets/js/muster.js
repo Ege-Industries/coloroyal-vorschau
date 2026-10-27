@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { buehne, musterBlatt, niete, lichter, schleife, RUHIG, hatWebGL } from './leder.js';
 
 const canvas = document.getElementById('muster3d');
-if (canvas && hatWebGL()) document.fonts.load('600 50px Cinzel').catch(() => {}).finally(start);
+if (canvas && hatWebGL()) document.fonts.load('italic 500 60px "Cormorant Garamond"').catch(() => {}).finally(start);
 
 function start() {
   const d = canvas.dataset;

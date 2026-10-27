@@ -25,7 +25,7 @@ function start() {
   const opts = { depth: 0.05, bevelEnabled: true, bevelThickness: 0.025, bevelSize: 0.012, bevelSegments: 5, curveSegments: 12 };
   const teile = [
     [LOGO.links, new THREE.MeshPhysicalMaterial({ ...basis, color: '#1a1918', normalMap: narb() })],
-    [LOGO.rechts, new THREE.MeshPhysicalMaterial({ ...basis, color: '#3592cc', normalMap: narb() })],
+    [LOGO.rechts, new THREE.MeshPhysicalMaterial({ ...basis, color: '#8f5530', normalMap: narb() })],
   ];
   for (const [konturen, mat] of teile) {
     for (const k of konturen) {

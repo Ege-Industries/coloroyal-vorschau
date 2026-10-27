@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 
-export const ROYAL = new THREE.Color('#5ab5e7');
+export const ROYAL = new THREE.Color('#d9bd8c');   // warmes Kantenlicht (Champagner)
 export const HANDY = matchMedia('(max-width: 759px)').matches || matchMedia('(pointer: coarse)').matches;
 export const RUHIG = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -167,7 +167,7 @@ export function musterTextur(hex, nr, name, hell, W = 256, H = 860) {
   x.fillStyle = g; x.fillRect(0, 0, W, H);
   // Naht
   x.save();
-  x.strokeStyle = hell ? 'rgba(31,111,166,.95)' : '#6cc0ee';
+  x.strokeStyle = hell ? 'rgba(120,90,50,.85)' : 'rgba(216,195,154,.9)';
   x.lineWidth = 4; x.setLineDash([14, 9]); x.lineCap = 'round';
   x.beginPath(); x.roundRect(16, 16, W - 32, H - 32, [18, 18, 70, 70]); x.stroke();
   x.restore();
@@ -175,13 +175,13 @@ export function musterTextur(hex, nr, name, hell, W = 256, H = 860) {
   const tinte = hell ? 'rgba(21,18,15,.88)' : 'rgba(245,238,226,.94)';
   x.save();
   x.translate(W / 2 + 14, H - 190); x.rotate(-Math.PI / 2);
-  x.fillStyle = tinte; x.font = '600 50px Cinzel, Georgia, serif'; x.textBaseline = 'middle';
+  x.fillStyle = tinte; x.font = 'italic 500 60px "Cormorant Garamond", Georgia, serif'; x.textBaseline = 'middle';
   x.shadowColor = hell ? 'rgba(255,255,255,.5)' : 'rgba(0,0,0,.6)'; x.shadowOffsetY = 2; x.shadowBlur = 2;
   x.fillText(name, 0, 0);
   x.restore();
-  x.fillStyle = tinte; x.font = '700 30px "Albert Sans", Arial, sans-serif'; x.textAlign = 'center';
+  x.fillStyle = tinte; x.font = '600 28px "Instrument Sans", Arial, sans-serif'; x.textAlign = 'center';
   x.fillText('No. ' + nr, W / 2, 82);
-  x.fillStyle = hell ? 'rgba(31,111,166,1)' : '#6cc0ee'; x.font = '700 18px "Albert Sans", Arial, sans-serif';
+  x.fillStyle = hell ? 'rgba(120,90,50,1)' : '#d8c39a'; x.font = '600 16px "Instrument Sans", Arial, sans-serif';
   x.fillText('COLOROYAL', W / 2, 116);
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;

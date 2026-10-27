@@ -50,10 +50,10 @@ void main(){
   float m = 1. - smoothstep(-.006, .006, d);
   vec3 c = mix(cv, cn, m);
   float aktiv = smoothstep(0., .04, uReveal) * (1. - smoothstep(.96, 1., uReveal));
-  vec3 blau = vec3(.35, .71, .91);
-  vec3 licht = blau * exp(-d * d / .004) * .32 + vec3(.9, .97, 1.) * exp(-d * d / .00003) * .95;
+  vec3 warm = vec3(.86, .72, .5);
+  vec3 licht = warm * exp(-d * d / .004) * .3 + vec3(1., .96, .88) * exp(-d * d / .00003) * .95;
   float funke = step(.994, h21(floor(s * uRes / 2.5) + floor(uTime * 24.))) * exp(-pow((d - .02) / .035, 2.));
-  licht += funke * vec3(.85, .95, 1.) * .9;
+  licht += funke * vec3(1., .9, .72) * .9;
   c += (1. - c) * licht * aktiv;
   float l = dot(cn, vec3(.299, .587, .114));
   float band = exp(-pow((dot(q, vec2(.72, .69)) - mix(-1.3, 1.3, uShine)) / .1, 2.));
@@ -166,7 +166,7 @@ function baueSegmente() {
 }
 function zeigeText(i) {
   const s = szenen[i];
-  ui.nr.textContent = `${String(i + 1).padStart(2, '0')} / ${String(szenen.length).padStart(2, '0')}`;
+  if (ui.nr) ui.nr.textContent = `${String(i + 1).padStart(2, '0')} / ${String(szenen.length).padStart(2, '0')}`;
   ui.titel.textContent = s.t.titel;
   ui.schaden.textContent = s.t.schaden;
   [...ui.seg.children].forEach((b, k) => { b.classList.toggle('fertig', k < i); b.classList.toggle('an', k === i); b.style.setProperty('--f', k < i ? 1 : 0); });

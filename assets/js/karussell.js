@@ -73,16 +73,16 @@ void main(){
   float m = 1. - smoothstep(-.008, .008, d);
   vec3 c = mix(cv, cn, m);
   float aktiv = step(.001, uP) * step(uP, .999);
-  c += aktiv * (vec3(.35, .71, .91) * exp(-d * d / .01) * .5 + vec3(.9, .97, 1.) * exp(-d * d / .0005) * 1.05);
+  c += (1. - c) * aktiv * (vec3(.86, .72, .5) * exp(-d * d / .01) * .4 + vec3(1., .96, .88) * exp(-d * d / .0005));
   float funke = step(.994, h21(floor(uv * vec2(260., 400.)) + floor(uT * 20.))) * exp(-pow((d - .03) / .045, 2.)) * aktiv;
-  c += funke * vec3(.85, .95, 1.) * 1.5;
+  c += funke * vec3(1., .9, .72) * 1.2;
   vec2 b = vec2(.5 * uAsp, .5);
   float sd = rr(q, b, .045);
   float alpha = 1. - smoothstep(-.003, .001, sd);
   float nahtD = abs(sd + .024);
   float koord = abs(q.x) > b.x - .07 ? q.y : q.x;
   float strich = step(.42, fract(koord * 30.));
-  c = mix(c, vec3(.44, .76, .94), (1. - smoothstep(.0016, .0042, nahtD)) * strich * .85);
+  c = mix(c, vec3(.94, .9, .84), (1. - smoothstep(.0012, .003, nahtD)) * .22);
   c *= .8 + .2 * smoothstep(0., -.14, sd);
   c *= 1. - uDim * .66;
   c *= uBereit;
@@ -127,7 +127,7 @@ async function start() {
   });
   // Lichtpfütze auf dem Boden unter der vorderen Tafel
   const pf = document.createElement('canvas'); pf.width = pf.height = 128;
-  { const x = pf.getContext('2d'), g = x.createRadialGradient(64, 64, 2, 64, 64, 64); g.addColorStop(0, 'rgba(90,181,231,.55)'); g.addColorStop(.5, 'rgba(90,181,231,.12)'); g.addColorStop(1, 'rgba(90,181,231,0)'); x.fillStyle = g; x.fillRect(0, 0, 128, 128); }
+  { const x = pf.getContext('2d'), g = x.createRadialGradient(64, 64, 2, 64, 64, 64); g.addColorStop(0, 'rgba(205,177,132,.42)'); g.addColorStop(.5, 'rgba(205,177,132,.1)'); g.addColorStop(1, 'rgba(205,177,132,0)'); x.fillStyle = g; x.fillRect(0, 0, 128, 128); }
   const pfuetze = new THREE.Mesh(new THREE.PlaneGeometry(PW * 2.6, 1.6), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(pf), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
   pfuetze.rotation.x = -Math.PI / 2; pfuetze.position.set(0, BODEN, 0.1); scene.add(pfuetze);
 
