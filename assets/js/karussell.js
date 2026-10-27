@@ -16,9 +16,10 @@ const k01 = x => Math.min(1, Math.max(0, x));
 const glatt = (a, b, x) => { const t = k01((x - a) / (b - a)); return t * t * (3 - 2 * t); };
 
 // Scroll → Position r (0 … N-1) mit Ruhephasen, damit jede Tafel kurz stehen bleibt
-const stand = { r: 0, rot: 0, aktiv: -1 };
+const stand = { r: 0, rot: 0, aktiv: -1, drin: false };
 function scrollStand() {
   const b = sektion.getBoundingClientRect(), weg = Math.max(1, b.height - innerHeight);
+  stand.drin = b.top <= 2 && b.bottom >= innerHeight - 2;
   const p = k01(-b.top / weg);
   stand.r = p * (N - 1 + 0.7) - 0.35;
   const rc = Math.min(N - 1, Math.max(0, stand.r)), i = Math.floor(rc), f = rc - i;
@@ -30,7 +31,10 @@ function scrollStand() {
     punkte.forEach((c, j) => c.classList.toggle('an', j === k));
   }
 }
-const reparatur = i => glatt(i - 0.3, i + 0.22, stand.r);
+// Reparatur läuft auf Zeit, nicht auf Scroll: erst wenn eine Tafel vorne stillsteht.
+// So sieht man immer zuerst das Vorher, egal wie schnell gescrollt wird.
+const VORHER_MS = 700, REP_MS = 1700;
+const sanft = t => -(Math.cos(Math.PI * t) - 1) / 2;
 
 if (sektion) {
   addEventListener('scroll', scrollStand, { passive: true });
@@ -163,8 +167,11 @@ async function start() {
     trommel.rotation.y = -rot * SCHRITT + (RUHIG ? 0 : maus.x * 0.08);
     trommel.rotation.x = RUHIG ? 0 : maus.y * 0.03;
     tafeln.forEach((tf, i) => {
-      const p = reparatur(i);
       const abst = Math.abs(i - rot);
+      if (abst < 0.04 && stand.drin) { if (tf.seit == null) tf.seit = now; }
+      else if (abst > 0.5 || !stand.drin) { tf.seit = null; tf.p = 0; }
+      if (tf.seit != null) tf.p = RUHIG ? 1 : sanft(k01((now - tf.seit - VORHER_MS) / REP_MS));
+      const p = tf.p || 0;
       tf.uni.uP.value = p; tf.uni.uT.value = t % 1000;
       tf.uni.uDim.value = glatt(0.15, 1.1, abst);
       tf.uni.uBereit.value += ((tf.uni.bereitZiel || 0) - tf.uni.uBereit.value) * Math.min(1, dt * 3);
@@ -172,7 +179,7 @@ async function start() {
     renderer.render(scene, cam);
     // Vorher/Nachher-Etikett an der linken oberen Ecke der vorderen Tafel
     if (chip) {
-      const k = Math.round(rot), p = reparatur(k);
+      const k = Math.round(rot), p = tafeln[k].p || 0;
       ecke.set(-PW / 2, PH / 2, 0).project(cam);
       chip.style.transform = `translate(${Math.round((ecke.x * 0.5 + 0.5) * w0) + 12}px, ${Math.round((-ecke.y * 0.5 + 0.5) * h0) + 12}px)`;
       chip.dataset.s = p > 0.5 ? 'nachher' : 'vorher';

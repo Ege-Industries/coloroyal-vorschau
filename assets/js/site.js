@@ -22,72 +22,29 @@ const WA = text => `https://wa.me/${DATEN.firma.wa}?text=${encodeURIComponent(te
   addEventListener('keydown', e => { if (e.key === 'Escape' && !menue.hidden) zu(); });
 }
 
-/* ---------------- Vorher / Nachher ---------------- */
-const regler = new Set();
-const sichtbar = new Set();
-const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? sichtbar.add(e.target) : sichtbar.delete(e.target)), { threshold: .25 });
-
-function vnStart(el) {
-  if (el._vn) return;
-  const range = $('.vn-regler', el);
-  const st = el._vn = { p: 50, user: -1e9, t0: Math.random() * 5000, druck: false };
-  const setze = v => { st.p = Math.max(0, Math.min(100, v)); el.style.setProperty('--p', st.p + '%'); range.value = Math.round(st.p); };
-  st.setze = setze;
-  const ausX = e => { const r = el.getBoundingClientRect(); setze((e.clientX - r.left) / r.width * 100); };
-  el.addEventListener('pointerdown', e => {
-    if (e.button !== 0) return;
-    st.druck = true; st.user = performance.now();
-    if (e.pointerType !== 'touch') { el.setPointerCapture(e.pointerId); ausX(e); }
-    else { st.sx = e.clientX; st.sy = e.clientY; st.zieh = false; }
-  });
-  el.addEventListener('pointermove', e => {
-    if (!st.druck) return;
-    st.user = performance.now();
-    if (e.pointerType === 'touch' && !st.zieh) {
-      if (Math.abs(e.clientX - st.sx) > 6 && Math.abs(e.clientX - st.sx) > Math.abs(e.clientY - st.sy)) st.zieh = true; else return;
-    }
-    ausX(e);
-  });
-  const los = () => { st.druck = false; };
-  el.addEventListener('pointerup', e => { if (e.pointerType === 'touch' && !st.zieh) ausX(e); los(); });
-  el.addEventListener('pointercancel', los);
-  el.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') st.user = performance.now(); });
-  el.addEventListener('mousemove', () => { st.user = performance.now(); });
-  range.addEventListener('input', () => { st.user = performance.now(); setze(+range.value); });
-  setze(50);
-  regler.add(el); io.observe(el);
+/* ---------------- Vorher | Nachher (Paar nebeneinander) ---------------- */
+const TXT = DATEN.texte;
+function paarHTML(id, cls = '') {
+  const p = P[id], quer = p.w > p.h ? 1 : 0;
+  return `<figure class="dp ${cls}" data-id="${id}" data-quer="${quer}">
+    <div class="dp-h"><img class="dp-v" src="${BASE}assets/img/arbeiten/${id}-v.jpg" alt="Vorher: ${p.titel}" width="${p.w}" height="${p.h}" loading="lazy"><span class="dp-l">Vorher</span></div>
+    <div class="dp-h"><img class="dp-n" src="${BASE}assets/img/arbeiten/${id}-n.jpg" alt="Nachher: ${p.titel}" width="${p.w}" height="${p.h}" loading="lazy"><span class="dp-l dp-ln">Nachher</span></div></figure>`;
 }
-$$('.vn').forEach(vnStart);
-
-function vnTausch(el, id) {
-  const p = P[id]; if (!p) return;
-  const [v, n] = [$('.vn-v', el), $('.vn-n img', el)];
-  const neu = (img, tag, was) => { img.src = `${BASE}assets/img/arbeiten/${id}-${tag}.jpg`; img.alt = `${was}: ${p.titel}`; img.loading = 'eager'; };
-  el.classList.add('wechsel');
-  neu(v, 'v', 'Vorher'); neu(n, 'n', 'Nachher');
-  el.dataset.id = id; el.style.setProperty('--ar', `${p.w}/${p.h}`);
-  $('.vn-regler', el).setAttribute('aria-label', `Vorher/Nachher vergleichen: ${p.titel}`);
-  el._vn.t0 = performance.now(); el._vn.user = -1e9; el._vn.setze(50);
+function paarTausch(el, id) {
+  const p = P[id]; if (!p || !el) return;
+  el.dataset.id = id; el.dataset.quer = p.w > p.h ? 1 : 0;
+  const v = $('.dp-v', el), n = $('.dp-n', el);
+  v.src = `${BASE}assets/img/arbeiten/${id}-v.jpg`; n.src = `${BASE}assets/img/arbeiten/${id}-n.jpg`;
+  v.alt = `Vorher: ${p.titel}`; n.alt = `Nachher: ${p.titel}`;
+  el.classList.remove('neu'); void el.offsetWidth; el.classList.add('neu');
 }
 
-// Bewegt sich von selbst, solange niemand anfasst
-function schleife(t) {
-  for (const el of sichtbar) {
-    const st = el._vn; if (!st || !el.hasAttribute('data-auto') || st.druck) continue;
-    if (t - st.user < 4200 || RUHIG) continue;
-    const k = (t - st.t0) / 1000;
-    st.setze(50 + 36 * Math.sin(k * 0.9) * (0.75 + 0.25 * Math.sin(k * 0.37)));
-  }
-  requestAnimationFrame(schleife);
-}
-requestAnimationFrame(schleife);
-
-/* Auswahl-Leisten (Startseite + Galerie) */
-function leiste(leisteEl, buehneVn, info) {
-  if (!leisteEl || !buehneVn) return;
+/* Auswahl-Leiste (Galerie) */
+function leiste(leisteEl, buehne, info) {
+  if (!leisteEl || !buehne) return;
   const wahl = id => {
     $$('.vt', leisteEl).forEach(b => b.classList.toggle('an', b.dataset.id === id));
-    vnTausch(buehneVn, id);
+    paarTausch(buehne, id);
     info?.(P[id]);
   };
   leisteEl.addEventListener('click', e => {
@@ -95,28 +52,23 @@ function leiste(leisteEl, buehneVn, info) {
     wahl(b.dataset.id);
     b.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   });
-  const erst = $('.vt', leisteEl); erst?.classList.add('an');
+  $('.vt', leisteEl)?.classList.add('an');
   return wahl;
 }
 
-// „Sehen Sie selbst“: welche Arbeiten laufen, bestimmt die Werkstatt in den Einstellungen
+// „Echte Arbeiten“ auf der Startseite: welche Arbeiten laufen, bestimmt die Werkstatt in den Einstellungen
 {
-  const vhL = $('#vhLeiste');
-  const wahl = leiste(vhL, $('#vorher-nachher .vn-gross'), p => {
-    $('#vhTitel').textContent = p.titel;
-    $('#vhLeistung').textContent = L[p.leistung]?.name || 'Möbel';
-  });
-  if (vhL) auswahl().then(a => {
+  const abL = $('#abLeiste');
+  if (abL) auswahl().then(a => {
     const ids = a.vorherNachher;
-    if (ids.join() === $$('.vt', vhL).map(b => b.dataset.id).join()) return;
-    vhL.innerHTML = ids.map(id => { const p = P[id]; return `<button class="vt" data-id="${id}" aria-label="${p.titel}"><img src="${BASE}assets/img/arbeiten/${id}-n.jpg" alt="" loading="lazy" width="${p.w}" height="${p.h}"><span>${p.titel}</span></button>`; }).join('');
-    wahl(ids[0]);
+    if (ids.join() === $$('.ab-karte', abL).map(k => k.dataset.id).join()) return;
+    abL.innerHTML = ids.map(id => `<article class="ab-karte" data-id="${id}">${paarHTML(id, 'dp-karte')}<p class="ab-text"><b>${TXT[id]?.titel || P[id].titel}</b><span>${TXT[id]?.schaden || ''}</span></p></article>`).join('');
   });
 }
 
 const gLeiste = $('#gLeiste');
 if (gLeiste) {
-  const wahl = leiste(gLeiste, $('.galerie .vn-gross'), p => {
+  const wahl = leiste(gLeiste, $('.galerie .dp-gross'), p => {
     $('#gTitel').textContent = p.titel;
     const a = $('#gLeistung');
     if (L[p.leistung]) { a.href = `leistungen/${p.leistung}.html`; a.firstChild.textContent = L[p.leistung].name + ' '; a.hidden = false; }

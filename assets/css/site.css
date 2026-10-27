@@ -264,7 +264,7 @@ body.menue-offen { overflow: hidden; }
 }
 
 /* ---------- Leistungen: 3D-Trommel aus echten Arbeiten ---------- */
-.karussell { height: calc(var(--n) * 88svh + 100svh); }
+.karussell { height: calc(var(--n) * 100svh + 100svh); }
 .k-buehne { position: sticky; top: 0; height: 100svh; overflow: hidden; }
 .k-licht { position: absolute; inset: 0; pointer-events: none;
   background: radial-gradient(34% 46% at 50% 36%, rgba(255,240,220,.08), transparent 70%), radial-gradient(50% 18% at 50% 72%, rgba(205,177,132,.1), transparent 70%), linear-gradient(180deg, #0b0a09, #0f0d0b 70%, #080706); }
@@ -796,7 +796,7 @@ h1.disp { font-size: clamp(40px, 10.6vw, 88px); }
 .chip.an { background: var(--creme); color: var(--tinte); border-color: transparent; }
 
 /* Kopf: dünn, ohne Linie; am Handy WhatsApp + Menü statt Leiste unten */
-.kopf { background: linear-gradient(180deg, rgba(12,11,10,.82), rgba(12,11,10,.35)); border-bottom: 0; }
+.kopf { background: rgba(12,11,10,.9); border-bottom: 0; }
 .kopf-logo img { height: 30px; }
 .kopf-nav a { font: 500 12.5px/1 var(--text); letter-spacing: .16em; }
 .kopf-nav a::after { height: 1px; }
@@ -907,3 +907,142 @@ h1.disp { font-size: clamp(40px, 10.6vw, 88px); }
 @media (min-width: 760px) { .anfrage { align-self: start; } }
 
 @media (min-width: 760px) and (max-height: 820px) { .cta-muster { height: 150px; width: 220px; margin-top: 16px; } .cta-muster i { height: 140px; width: 52px; margin-left: -26px; } .cta-in p { margin: 10px auto 16px; } }
+
+/* =====================================================================
+   28.10.: Vorher | Nachher als ruhiges Paar (kein Schieberegler) + neue Abschnitte
+   ===================================================================== */
+.dp { position: relative; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; border-radius: var(--r); overflow: hidden; background: #000; }
+.dp[data-quer="1"] { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+.dp-h { position: relative; overflow: hidden; min-height: 0; }
+.dp-h img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.dp-l { position: absolute; left: 10px; top: 10px; height: 24px; padding: 0 10px; border-radius: 999px; display: inline-flex; align-items: center; font: 600 9.5px/1 var(--text); letter-spacing: .2em; text-transform: uppercase; background: rgba(12,11,10,.62); color: var(--creme); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.dp-ln { background: rgba(239,233,224,.92); color: var(--tinte); }
+.dp.neu .dp-h { animation: dpRein .6s ease both; }
+.dp.neu .dp-h + .dp-h { animation-delay: .12s; }
+@keyframes dpRein { from { opacity: 0; transform: scale(1.03); } }
+.g-buehne .dp-gross { height: 46svh; }
+.ld-bild .dp-gross { height: 27svh; }
+.arbeit .dp-karte { height: 50svh; }
+@media (min-width: 760px) {
+  .g-buehne .dp-gross { height: min(60svh, 620px); }
+  .ld-bild .dp-gross { height: min(64svh, 640px); }
+  .arbeit .dp-karte { height: 60svh; }
+}
+
+/* Einsatzbereiche */
+.bereiche { gap: 6px; }
+.be-liste { list-style: none; margin: 18px 0 0; padding: 0; border-top: 1px solid var(--linie-d); }
+.be-liste li { display: grid; grid-template-columns: 34px 1fr; column-gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--linie-d); align-items: baseline; }
+.be-nr { grid-row: span 2; font: 600 10.5px/1 var(--text); letter-spacing: .18em; color: var(--royal-tief); }
+.be-liste b { font-size: 31px; font-weight: 500; line-height: 1.05; }
+.be-txt { grid-column: 2; font-size: 13.5px; color: var(--leise-d); margin-top: 3px; }
+.be-bild { display: none; }
+@media (min-width: 760px) {
+  .bereiche { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); grid-template-rows: auto auto; column-gap: clamp(32px, 6vw, 110px); align-content: center; }
+  .be-kopf, .be-liste { grid-column: 1; }
+  .be-liste { margin-top: 26px; }
+  .be-liste li { grid-template-columns: 56px minmax(0, 1fr) auto; padding: 16px 0; align-items: center; }
+  .be-nr { grid-row: auto; }
+  .be-liste b { font-size: clamp(32px, 3vw, 46px); }
+  .be-txt { grid-column: 3; margin: 0; text-align: right; font-size: 15px; }
+  .be-bild { display: block; grid-column: 2; grid-row: 1 / span 2; margin: 0; height: min(76svh, 740px); border-radius: var(--r); overflow: hidden; box-shadow: 0 30px 60px rgba(40,30,20,.18); }
+  .be-bild img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 55%; }
+}
+
+/* Echte Arbeiten */
+.arbeiten { gap: 18px; }
+.ab-leiste { gap: 14px; padding-bottom: 4px; }
+.ab-karte { width: 80vw; max-width: 420px; margin: 0; }
+.ab-karte .dp-karte { height: 50svh; }
+.ab-text { display: grid; gap: 3px; margin: 12px 2px 0; }
+.ab-text b { font: 500 23px/1.1 var(--disp); }
+.ab-text span { font-size: 13px; color: var(--leise); }
+.arbeiten > .knopf { align-self: flex-start; }
+@media (min-width: 760px) {
+  .ab-kopf { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+  .ab-karte { width: min(30vw, 420px); }
+  .ab-karte .dp-karte { height: min(50svh, 520px); }
+  .ab-text b { font-size: 26px; }
+}
+
+/* Ablauf */
+.ablauf { gap: 8px; }
+.al-schritte { list-style: none; padding: 0; margin: 16px 0 22px; display: grid; gap: 0; border-top: 1px solid var(--linie); }
+.al-schritte li { display: grid; grid-template-columns: 44px 1fr; column-gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--linie); }
+.al-nr { grid-row: span 2; font: italic 500 30px/1 var(--disp); color: var(--royal); }
+.al-schritte h3 { font-size: 26px; margin: 0 0 4px; }
+.al-schritte p { margin: 0; font-size: 14px; color: var(--leise); line-height: 1.45; }
+.ablauf .knoepfe .knopf { flex: 1 1 auto; }
+@media (min-width: 760px) {
+  .al-schritte { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(18px, 2.4vw, 40px); border-top: 0; margin: 40px 0 44px; }
+  .al-schritte li { display: block; border-bottom: 0; border-top: 1px solid rgba(239,233,224,.22); padding: 22px 0 0; }
+  .al-nr { display: block; font-size: 54px; margin-bottom: 18px; }
+  .al-schritte h3 { font-size: 32px; margin-bottom: 10px; }
+  .al-schritte p { font-size: 15.5px; }
+  .ablauf .knoepfe .knopf { flex: none; }
+}
+
+/* Häufige Fragen */
+.fragen { gap: 6px; }
+.fr-liste { margin: 16px 0 0; border-top: 1px solid var(--linie-d); }
+.fr-liste > div { padding: 13px 0; border-bottom: 1px solid var(--linie-d); }
+.fr-liste dt { font: 500 22px/1.15 var(--disp); margin: 0 0 4px; }
+.fr-liste dd { margin: 0; font-size: 14px; line-height: 1.5; color: var(--leise-d); }
+@media (min-width: 760px) {
+  .fragen { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); column-gap: clamp(32px, 6vw, 110px); align-content: center; align-items: start; }
+  .fr-liste { margin-top: 0; }
+  .fr-liste > div { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 24px; padding: 20px 0; }
+  .fr-liste dt { font-size: 26px; }
+  .fr-liste dd { font-size: 15.5px; }
+}
+
+/* Niedrige Handy-Bildschirme */
+@media (max-width: 759px) and (max-height: 740px) {
+  .be-liste li { padding: 8px 0; }
+  .be-liste b { font-size: 25px; }
+  .be-txt { font-size: 12.5px; }
+  .ab-karte .dp-karte { height: 40svh; }
+  .al-schritte li { padding: 9px 0; }
+  .al-schritte h3 { font-size: 21px; }
+  .al-schritte p { font-size: 12.5px; }
+  .al-nr { font-size: 24px; }
+  .fr-liste > div { padding: 8px 0; }
+  .fr-liste dt { font-size: 18px; }
+  .fr-liste dd { font-size: 12.5px; }
+  .g-buehne .dp-gross { height: 34svh; }
+  .ld-bild .dp-gross { height: 24svh; }
+  .arbeit .dp-karte { height: 44svh; }
+}
+@media (min-width: 760px) and (max-height: 820px) {
+  .be-liste li { padding: 11px 0; }
+  .be-liste b { font-size: 32px; }
+  .al-schritte { margin: 26px 0 30px; }
+  .al-nr { font-size: 42px; margin-bottom: 10px; }
+  .fr-liste > div { padding: 14px 0; }
+  .fr-liste dt { font-size: 22px; }
+}
+
+/* Häufig gestellte Fragen: Aufklapp-Liste */
+[hidden] { display: none !important; }
+.fr-liste { border-top: 1px solid var(--linie-d); }
+.fr { border-bottom: 1px solid var(--linie-d); }
+.fr summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 0; font: 500 22px/1.2 var(--disp); color: var(--tinte); }
+.fr summary::-webkit-details-marker { display: none; }
+.fr summary i { position: relative; flex: none; width: 30px; height: 30px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(22,20,18,.2); transition: background .25s, box-shadow .25s; }
+.fr summary i::before, .fr summary i::after { content: ''; position: absolute; left: 50%; top: 50%; width: 11px; height: 1.5px; background: var(--tinte); transform: translate(-50%, -50%); transition: transform .3s ease, background .25s; }
+.fr summary i::after { transform: translate(-50%, -50%) rotate(90deg); }
+.fr[open] summary i { background: var(--tinte); box-shadow: none; }
+.fr[open] summary i::before, .fr[open] summary i::after { background: var(--creme); }
+.fr[open] summary i::after { transform: translate(-50%, -50%) rotate(0deg); }
+.fr summary:hover span { color: var(--royal-tief); }
+.fr p { margin: -4px 0 18px; max-width: 62ch; font-size: 14.5px; line-height: 1.55; color: var(--leise-d); }
+.fr[open] p { animation: frAuf .35s ease; }
+@keyframes frAuf { from { opacity: 0; transform: translateY(-6px); } }
+@media (min-width: 760px) {
+  .fr summary { font-size: 28px; padding: 22px 0; }
+  .fr p { font-size: 16px; margin-bottom: 24px; }
+}
+@media (max-width: 759px) and (max-height: 740px) {
+  .fr summary { font-size: 19px; padding: 11px 0; }
+  .fr p { font-size: 13px; margin-bottom: 12px; }
+}

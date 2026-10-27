@@ -9,7 +9,7 @@ const P = Object.fromEntries(PAARE.map(p => [p.id, p]));
 const L = Object.fromEntries(DATEN.leistungen.map(l => [l.slug, l]));
 const MAX = { vorherNachher: 12, film: 8 };
 const ERKL = {
-  vorherNachher: 'Diese Arbeiten laufen im Bereich „Sehen Sie selbst“ auf der Startseite, in dieser Reihenfolge. Die erste ist groß zu sehen. Bis zu 12.',
+  vorherNachher: 'Diese Arbeiten zeigt die Startseite im Bereich „Echte Arbeiten“ als Vorher | Nachher, in dieser Reihenfolge. Bis zu 12.',
   film: 'Diese Arbeiten laufen als Film ganz oben auf der Startseite. Am stärksten wirken ganze Sitze mit deutlichem Schaden. Bis zu 8.',
 };
 let modus = 'vorherNachher', stand = null, gespeichert = '', vorschau = false;
